@@ -26,4 +26,5 @@ class PositionwiseFeedForward(nn.Module):
         output = self.relu(self.w_1(x.transpose(1, 2)))
         output = self.w_2(output).transpose(2, 1)
         output = self.dropout(output)
+
         return output

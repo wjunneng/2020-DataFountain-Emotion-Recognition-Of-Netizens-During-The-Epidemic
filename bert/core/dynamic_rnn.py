@@ -35,17 +35,14 @@ class DynamicLSTM(nn.Module):
         self.rnn_type = rnn_type
 
         if self.rnn_type == 'LSTM':
-            self.RNN = nn.LSTM(
-                input_size=input_size, hidden_size=hidden_size, num_layers=num_layers,
-                bias=bias, batch_first=batch_first, dropout=dropout, bidirectional=bidirectional)
+            self.RNN = nn.LSTM(input_size=input_size, hidden_size=hidden_size, num_layers=num_layers,
+                               bias=bias, batch_first=batch_first, dropout=dropout, bidirectional=bidirectional)
         elif self.rnn_type == 'GRU':
-            self.RNN = nn.GRU(
-                input_size=input_size, hidden_size=hidden_size, num_layers=num_layers,
-                bias=bias, batch_first=batch_first, dropout=dropout, bidirectional=bidirectional)
+            self.RNN = nn.GRU(input_size=input_size, hidden_size=hidden_size, num_layers=num_layers,
+                              bias=bias, batch_first=batch_first, dropout=dropout, bidirectional=bidirectional)
         elif self.rnn_type == 'RNN':
-            self.RNN = nn.RNN(
-                input_size=input_size, hidden_size=hidden_size, num_layers=num_layers,
-                bias=bias, batch_first=batch_first, dropout=dropout, bidirectional=bidirectional)
+            self.RNN = nn.RNN(input_size=input_size, hidden_size=hidden_size, num_layers=num_layers,
+                              bias=bias, batch_first=batch_first, dropout=dropout, bidirectional=bidirectional)
 
     def forward(self, x, x_len):
         """
@@ -70,21 +67,22 @@ class DynamicLSTM(nn.Module):
             out_pack, ht = self.RNN(x_emb_p, None)
             ct = None
         """unsort: h"""
-        ht = torch.transpose(ht, 0, 1)[
-            x_unsort_idx]  # (num_layers * num_directions, batch, hidden_size) -> (batch, ...)
+        # (num_layers * num_directions, batch, hidden_size) -> (batch, ...)
+        ht = torch.transpose(ht, 0, 1)[x_unsort_idx]
         ht = torch.transpose(ht, 0, 1)
 
         if self.only_use_last_hidden_state:
             return ht
         else:
             """unpack: out"""
-            out = torch.nn.utils.rnn.pad_packed_sequence(out_pack, batch_first=self.batch_first)  # (sequence, lengths)
-            out = out[0]  #
+            # (sequence, lengths)
+            out = torch.nn.utils.rnn.pad_packed_sequence(out_pack, batch_first=self.batch_first)
+            out = out[0]
             out = out[x_unsort_idx]
             """unsort: out c"""
             if self.rnn_type == 'LSTM':
-                ct = torch.transpose(ct, 0, 1)[
-                    x_unsort_idx]  # (num_layers * num_directions, batch, hidden_size) -> (batch, ...)
+                # (num_layers * num_directions, batch, hidden_size) -> (batch, ...)
+                ct = torch.transpose(ct, 0, 1)[x_unsort_idx]
                 ct = torch.transpose(ct, 0, 1)
 
             return out, (ht, ct)

@@ -36,7 +36,8 @@ class Attention(nn.Module):
             self.weight = nn.Parameter(torch.Tensor(hidden_dim * 2))
         elif self.score_function == 'bi_linear':
             self.weight = nn.Parameter(torch.Tensor(hidden_dim, hidden_dim))
-        else:  # dot_product / scaled_dot_product
+        else:
+            # dot_product / scaled_dot_product
             self.register_parameter('weight', None)
         self.reset_parameters()
 
@@ -52,7 +53,6 @@ class Attention(nn.Module):
         # k_len missing
         if len(k.shape) == 2:
             k = torch.unsqueeze(k, dim=1)
-        # ?
         mb_size = k.shape[0]
         k_len = k.shape[1]
         q_len = q.shape[1]
@@ -86,6 +86,7 @@ class Attention(nn.Module):
             score = torch.bmm(qw, kt)
         else:
             raise RuntimeError('invalid score_function')
+
         score = F.softmax(score, dim=-1)
         # (n_head*?, q_len, hidden_dim)
         output = torch.bmm(score, kx)
@@ -99,7 +100,6 @@ class Attention(nn.Module):
 
 class NoQueryAttention(Attention):
     """q is a parameter"""
-
     def __init__(self, embed_dim, hidden_dim=None, out_dim=None, n_head=1, score_function='dot_product', q_len=1,
                  dropout=0):
         super(NoQueryAttention, self).__init__(embed_dim, hidden_dim, out_dim, n_head, score_function, dropout)
@@ -114,4 +114,5 @@ class NoQueryAttention(Attention):
     def forward(self, k, **kwargs):
         mb_size = k.shape[0]
         q = self.q.expand(mb_size, -1, -1)
+
         return super(NoQueryAttention, self).forward(k, q)
