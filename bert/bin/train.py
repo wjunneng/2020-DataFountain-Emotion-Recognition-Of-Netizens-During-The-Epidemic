@@ -18,7 +18,7 @@ import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader, random_split
 
-from data_utils import build_tokenizer, build_embedding_matrix, Tokenizer4Bert, ABSADataset
+from bert.lib.data_util import build_tokenizer, build_embedding_matrix, Tokenizer4Bert, ABSADataset
 
 from models import LSTM, IAN, MemNet, RAM, TD_LSTM, Cabasc, ATAE_LSTM, TNet_LF, AOA, MGAN, LCF_BERT
 from models.aen import AEN_BERT
