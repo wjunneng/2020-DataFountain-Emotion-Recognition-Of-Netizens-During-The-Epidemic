@@ -28,6 +28,18 @@ class Instructor(object):
     """
 
     def __init__(self, df_train: pd.DataFrame):
+        if args.seed is not None:
+            random.seed(args.seed)
+            np.random.seed(args.seed)
+            torch.manual_seed(args.seed)
+            torch.backends.cudnn.deterministic = True
+            torch.backends.cudnn.benchmark = False
+
+        if os.path.exists(args.log_dir) is False:
+            os.mkdir(args.log_dir)
+        log_file = '{}-{}.log'.format(args.model_name, strftime('%y%m%d-%H%M', localtime()))
+        logger.addHandler(logging.FileHandler(os.path.join(args.log_dir, log_file)))
+
         self.args = args
         self.df_train = df_train
 
@@ -74,7 +86,7 @@ class Instructor(object):
         valset_len = int(len(trainset) * self.args.valset_ratio)
         self.trainset, self.valset = random_split(trainset, (len(trainset) - valset_len, valset_len))
 
-    def run(self):
+    def main(self):
         # loss and optimizer
         # criterion = nn.CrossEntropyLoss()
         # 标签平滑
@@ -134,28 +146,3 @@ class Instructor(object):
 
         logger.info('> max_val_acc: {0} max_val_f1: {1}'.format(max_val_acc, max_val_f1))
         logger.info('> train save model path: {}'.format(best_model_path))
-
-
-if __name__ == '__main__':
-    df_train = pd.read_csv(args.train_100k_path, engine='python', sep=',', encoding='utf-8')
-    df_train = df_train[df_train[args.output_categories].isin(['-1', '0', '1'])]
-
-    if args.seed is not None:
-        random.seed(args.seed)
-        np.random.seed(args.seed)
-        torch.manual_seed(args.seed)
-        torch.backends.cudnn.deterministic = True
-        torch.backends.cudnn.benchmark = False
-
-    args.model_class = args.model_classes[args.model_name]
-    args.inputs_cols = args.inputs_cols[args.model_name]
-    args.initializer = args.initializers[args.initializer]
-    args.optimizer = args.optimizers[args.optimizer]
-
-    if os.path.exists(args.log_dir) is False:
-        os.mkdir(args.log_dir)
-    log_file = '{}-{}.log'.format(args.model_name, strftime('%y%m%d-%H%M', localtime()))
-    logger.addHandler(logging.FileHandler(os.path.join(args.log_dir, log_file)))
-
-    instructor = Instructor(df_train)
-    instructor.run()

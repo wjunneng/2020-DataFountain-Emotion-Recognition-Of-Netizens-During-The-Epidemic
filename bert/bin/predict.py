@@ -65,11 +65,3 @@ class Predict(object):
         return labels
 
 
-if __name__ == '__main__':
-    df_test = pd.read_csv(args.test_10k_path, engine='python', sep=',', encoding='utf-8')
-    df_sub = pd.read_csv(args.submit_example_path)
-
-    df_sub['y'] = np.asarray(Predict(text=df_test[args.input_categories].values,
-                                     target=df_test[args.target_categories].values).predict_all()) - 1
-    df_sub['id'] = df_sub['id'].apply(lambda x: str(x) + ' ')
-    df_sub.to_csv(args.submit_path, index=False, encoding='utf-8')
