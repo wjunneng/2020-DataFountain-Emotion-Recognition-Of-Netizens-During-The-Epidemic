@@ -19,8 +19,9 @@ from bert.core.bert_spc import BERT_SPC
 from bert.core.aen import AEN_BERT
 
 # -* orignal dir/path *-
-projec_dir = os.path.dirname(os.path.abspath('..'))
-data_dir = os.path.join(projec_dir, 'data')
+# project_dir = os.path.dirname(os.path.abspath('..'))
+project_dir = '/home/wjunneng/Ubuntu/2020-DataFountain-Emotion-Recognition-Of-Netizens-During-The-Epidemic'
+data_dir = os.path.join(project_dir, 'data')
 input_dir = os.path.join(data_dir, 'input')
 test_dataset_dir = os.path.join(input_dir, 'test_dataset')
 train_dataset_dir = os.path.join(input_dir, 'train_dataset')
@@ -35,14 +36,14 @@ submit_example_path = os.path.join(input_dir, 'submit_example.csv')
 log_dir = os.path.join(data_dir, 'log')
 output_dir = os.path.join(data_dir, 'output')
 submit_path = os.path.join(input_dir, 'submit.csv')
-labels = [-1, 0, 1]  # 消极 中性 积极
+labels = ['-1', '0', '1']  # 消极 中性 积极
 
 input_categories = '微博中文内容'
 target_categories = '发布人账号'
 output_categories = '情感倾向'
 
-BATCH = 64
-EPOCHS = 3
+BATCH = 8
+EPOCHS = 1
 # ############################### model parameters
 topics = None
 # 是否按照批量预测
@@ -61,7 +62,7 @@ dropout = 0.1
 # 权重
 l2reg = 0.01
 # 步长
-log_step = 5
+log_step = 100
 # 嵌入的维度
 embed_dim = 300
 # 隐藏层神经元个数

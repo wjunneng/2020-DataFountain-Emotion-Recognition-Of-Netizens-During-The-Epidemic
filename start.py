@@ -11,7 +11,7 @@ from bert.bin.train import Instructor
 
 if __name__ == '__main__':
     # -* train *-
-    df_train = pd.read_csv(args.train_100k_path, engine='python', sep=',', encoding='utf-8')
+    df_train = pd.read_csv(args.train_100k_path, encoding='utf-8')
     df_train = df_train[df_train[args.output_categories].isin(['-1', '0', '1'])]
 
     args.model_class = args.model_classes[args.model_name]
