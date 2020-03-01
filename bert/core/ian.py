@@ -8,6 +8,8 @@ from bert.core.attention import Attention
 import torch
 import torch.nn as nn
 
+DEVICE = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+
 
 class IAN(nn.Module):
     def __init__(self, embedding_matrix, opt):
@@ -30,11 +32,11 @@ class IAN(nn.Module):
         context, (_, _) = self.lstm_context(context, text_raw_len)
         aspect, (_, _) = self.lstm_aspect(aspect, aspect_len)
 
-        aspect_len = torch.tensor(aspect_len, dtype=torch.float).to(self.opt.device)
+        aspect_len = torch.tensor(aspect_len, dtype=torch.float).to(DEVICE)
         aspect_pool = torch.sum(aspect, dim=1)
         aspect_pool = torch.div(aspect_pool, aspect_len.view(aspect_len.size(0), 1))
 
-        text_raw_len = torch.tensor(text_raw_len, dtype=torch.float).to(self.opt.device)
+        text_raw_len = torch.tensor(text_raw_len, dtype=torch.float).to(DEVICE)
         context_pool = torch.sum(context, dim=1)
         context_pool = torch.div(context_pool, text_raw_len.view(text_raw_len.size(0), 1))
 

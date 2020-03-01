@@ -9,6 +9,8 @@ from bert.core.wise_feed_forward import PositionwiseFeedForward
 import torch
 import torch.nn as nn
 
+DEVICE = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+
 
 # CrossEntropyLoss for Label Smoothing Regularization
 class CrossEntropyLoss_LSR(nn.Module):
@@ -70,8 +72,8 @@ class AEN_GloVe(nn.Module):
 
         s1, _ = self.attn_s1(hc, ht)
 
-        context_len = torch.tensor(context_len, dtype=torch.float).to(self.opt.device)
-        target_len = torch.tensor(target_len, dtype=torch.float).to(self.opt.device)
+        context_len = torch.tensor(context_len, dtype=torch.float).to(DEVICE)
+        target_len = torch.tensor(target_len, dtype=torch.float).to(DEVICE)
 
         hc_mean = torch.div(torch.sum(hc, dim=1), context_len.view(context_len.size(0), 1))
         ht_mean = torch.div(torch.sum(ht, dim=1), target_len.view(target_len.size(0), 1))
@@ -119,8 +121,8 @@ class AEN_BERT(nn.Module):
 
         s1, _ = self.attn_s1(hc, ht)
 
-        context_len = torch.tensor(context_len, dtype=torch.float).to(self.opt.device)
-        target_len = torch.tensor(target_len, dtype=torch.float).to(self.opt.device)
+        context_len = torch.tensor(context_len, dtype=torch.float).to(DEVICE)
+        target_len = torch.tensor(target_len, dtype=torch.float).to(DEVICE)
 
         hc_mean = torch.div(torch.sum(hc, dim=1), context_len.view(context_len.size(0), 1))
         ht_mean = torch.div(torch.sum(ht, dim=1), target_len.view(target_len.size(0), 1))

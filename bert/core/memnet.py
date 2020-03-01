@@ -9,6 +9,8 @@ import torch.nn as nn
 
 from bert.core.squeeze_embedding import SqueezeEmbedding
 
+DEVICE = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+
 
 class MemNet(nn.Module):
     def locationed_memory(self, memory, memory_len):
@@ -22,7 +24,7 @@ class MemNet(nn.Module):
                 weight[i].append(1 - float(idx + 1) / memory_len[i])
             for idx in range(memory_len[i], seq_len):
                 weight[i].append(1)
-        weight = torch.tensor(weight).to(self.opt.device)
+        weight = torch.tensor(weight).to(DEVICE)
         memory = weight.unsqueeze(2) * memory
         return memory
 
@@ -39,7 +41,7 @@ class MemNet(nn.Module):
         text_raw_without_aspect_indices, aspect_indices = inputs[0], inputs[1]
         memory_len = torch.sum(text_raw_without_aspect_indices != 0, dim=-1)
         aspect_len = torch.sum(aspect_indices != 0, dim=-1)
-        nonzeros_aspect = torch.tensor(aspect_len, dtype=torch.float).to(self.opt.device)
+        nonzeros_aspect = torch.tensor(aspect_len, dtype=torch.float).to(DEVICE)
 
         memory = self.embed(text_raw_without_aspect_indices)
         memory = self.squeeze_embedding(memory, memory_len)

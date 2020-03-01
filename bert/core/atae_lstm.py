@@ -10,6 +10,8 @@ import torch.nn as nn
 
 from bert.core.squeeze_embedding import SqueezeEmbedding
 
+DEVICE = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+
 
 class ATAE_LSTM(nn.Module):
     def __init__(self, embedding_matrix, opt):
@@ -25,7 +27,7 @@ class ATAE_LSTM(nn.Module):
         text_raw_indices, aspect_indices = inputs[0], inputs[1]
         x_len = torch.sum(text_raw_indices != 0, dim=-1)
         x_len_max = torch.max(x_len)
-        aspect_len = torch.tensor(torch.sum(aspect_indices != 0, dim=-1), dtype=torch.float).to(self.opt.device)
+        aspect_len = torch.tensor(torch.sum(aspect_indices != 0, dim=-1), dtype=torch.float).to(DEVICE)
 
         x = self.embed(text_raw_indices)
         x = self.squeeze_embedding(x, x_len)

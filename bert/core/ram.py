@@ -8,6 +8,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+DEVICE = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+
 
 class RAM(nn.Module):
     def locationed_memory(self, memory, memory_len, left_len, aspect_len):
@@ -31,8 +33,8 @@ class RAM(nn.Module):
             for idx in range(memory_len[i], seq_len):
                 weight[i].append(1)
                 u[i].append(0)
-        u = torch.tensor(u).to(self.opt.device).unsqueeze(2)
-        weight = torch.tensor(weight).to(self.opt.device).unsqueeze(2)
+        u = torch.tensor(u).to(DEVICE).unsqueeze(2)
+        weight = torch.tensor(weight).to(DEVICE).unsqueeze(2)
         memory = torch.cat([memory * weight, u], dim=2)
         return memory
 
@@ -60,7 +62,7 @@ class RAM(nn.Module):
         aspect = self.embed(aspect_indices)
         aspect = torch.sum(aspect, dim=1)
         aspect = torch.div(aspect, nonzeros_aspect.unsqueeze(-1))
-        et = torch.zeros_like(aspect).to(self.opt.device)
+        et = torch.zeros_like(aspect).to(DEVICE)
 
         batch_size = memory.size(0)
         seq_len = memory.size(1)

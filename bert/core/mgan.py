@@ -8,6 +8,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+DEVICE = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+
 
 class LocationEncoding(nn.Module):
     def __init__(self, opt):
@@ -16,7 +18,7 @@ class LocationEncoding(nn.Module):
 
     def forward(self, x, pos_inx):
         batch_size, seq_len = x.size()[0], x.size()[1]
-        weight = self.weight_matrix(pos_inx, batch_size, seq_len).to(self.opt.device)
+        weight = self.weight_matrix(pos_inx, batch_size, seq_len).to(DEVICE)
         x = weight.unsqueeze(2) * x
         return x
 
@@ -49,7 +51,7 @@ class AlignmentMatrix(nn.Module):
     def forward(self, batch_size, ctx, asp):
         ctx_len = ctx.size(1)
         asp_len = asp.size(1)
-        alignment_mat = torch.zeros(batch_size, ctx_len, asp_len).to(self.opt.device)
+        alignment_mat = torch.zeros(batch_size, ctx_len, asp_len).to(DEVICE)
         ctx_chunks = ctx.chunk(ctx_len, dim=1)
         asp_chunks = asp.chunk(asp_len, dim=1)
         for i, ctx_chunk in enumerate(ctx_chunks):

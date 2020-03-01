@@ -11,6 +11,8 @@ import numpy as np
 
 from pytorch_transformers.modeling_bert import BertPooler, BertSelfAttention
 
+DEVICE = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+
 
 class SelfAttention(nn.Module):
     def __init__(self, config, opt):
@@ -22,7 +24,7 @@ class SelfAttention(nn.Module):
 
     def forward(self, inputs):
         zero_tensor = torch.tensor(np.zeros((inputs.size(0), 1, 1, self.opt.max_seq_len),
-                                            dtype=np.float32), dtype=torch.float32).to(self.opt.device)
+                                            dtype=np.float32), dtype=torch.float32).to(DEVICE)
         SA_out = self.SA(inputs, zero_tensor)
         return self.tanh(SA_out[0])
 
@@ -63,7 +65,7 @@ class LCF_BERT(nn.Module):
             for j in range(asp_begin + asp_len + mask_len, self.opt.max_seq_len):
                 masked_text_raw_indices[text_i][j] = np.zeros((self.opt.bert_dim), dtype=np.float)
         masked_text_raw_indices = torch.from_numpy(masked_text_raw_indices)
-        return masked_text_raw_indices.to(self.opt.device)
+        return masked_text_raw_indices.to(DEVICE)
 
     def feature_dynamic_weighted(self, text_local_indices, aspect_indices):
         texts = text_local_indices.cpu().numpy()
@@ -87,7 +89,7 @@ class LCF_BERT(nn.Module):
             for i in range(len(distances)):
                 masked_text_raw_indices[text_i][i] = masked_text_raw_indices[text_i][i] * distances[i]
         masked_text_raw_indices = torch.from_numpy(masked_text_raw_indices)
-        return masked_text_raw_indices.to(self.opt.device)
+        return masked_text_raw_indices.to(DEVICE)
 
     def forward(self, inputs):
         text_bert_indices = inputs[0]
