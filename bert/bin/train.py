@@ -27,10 +27,9 @@ class Instructor(object):
     特点：使用flyai字典的get all data  | 自己进行划分next batch
     """
 
-    def __init__(self, df_train: pd.DataFrame, df_test: pd.DataFrame):
+    def __init__(self, df_train: pd.DataFrame):
         self.args = args
         self.df_train = df_train
-        self.df_test = df_test
 
         if 'bert' in self.args.model_name:
             self.tokenizer = Tokenizer4Bert(max_seq_len=self.args.max_seq_len,
@@ -44,7 +43,7 @@ class Instructor(object):
 
         Util.print_args(model=self.model, logger=logger, args=self.args)
 
-        train_target = df_train['发布人账号'].values
+        train_target = df_train[self.args.target_categories].values
         train_text = df_train[self.args.input_categories].values
         train_stance = df_train[self.args.output_categories].values
 
@@ -133,7 +132,6 @@ class Instructor(object):
             if val_f1 > max_val_f1:
                 max_val_f1 = val_f1
 
-        logger.info('>>> target: {}'.format(self.target_set))
         logger.info('> max_val_acc: {0} max_val_f1: {1}'.format(max_val_acc, max_val_f1))
         logger.info('> train save model path: {}'.format(best_model_path))
 
@@ -141,8 +139,6 @@ class Instructor(object):
 if __name__ == '__main__':
     df_train = pd.read_csv(args.train_100k_path, engine='python', sep=',', encoding='utf-8')
     df_train = df_train[df_train[args.output_categories].isin(['-1', '0', '1'])]
-    df_test = pd.read_csv(args.test_10k_path, engine='python', sep=',', encoding='utf-8')
-    df_sub = pd.read_csv(args.submit_example_path)
 
     if args.seed is not None:
         random.seed(args.seed)
@@ -158,8 +154,8 @@ if __name__ == '__main__':
 
     if os.path.exists(args.log_dir) is False:
         os.mkdir(args.log_dir)
-    log_file = '{}-{}-{}.log'.format(args.model_name, args.dataset, strftime('%y%m%d-%H%M', localtime()))
+    log_file = '{}-{}.log'.format(args.model_name, strftime('%y%m%d-%H%M', localtime()))
     logger.addHandler(logging.FileHandler(os.path.join(args.log_dir, log_file)))
 
-    instructor = Instructor(df_train, df_test)
+    instructor = Instructor(df_train)
     instructor.run()

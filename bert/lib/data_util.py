@@ -81,13 +81,13 @@ class ABSADataset(Dataset):
 
         if data_type == 'csv':
             self.fname = fname
-            self.label2idx = dict((args.labels[i], i - 1) for i in range(len(args.labels)))
+            self.label2idx = dict((args.labels[i], i) for i in range(len(args.labels)))
             self.data = self._deal_csv()
         elif data_type == 'txt':
             self.fname = fname
             self.data = self._deal_txt()
         else:
-            self.label2idx = dict((args.labels[i], i - 1) for i in range(len(args.labels)))
+            self.label2idx = dict((args.labels[i], i) for i in range(len(args.labels)))
             self.fname = fname
             self.data = self._deal_none()
 

@@ -27,24 +27,23 @@ train_dataset_dir = os.path.join(input_dir, 'train_dataset')
 pretain_model_dir = os.path.join(data_dir, 'pretain_model')
 
 test_10k_path = os.path.join(test_dataset_dir, 'nCov_10k_test_utf_8.csv')
-# train_100k_path = os.path.join(train_dataset_dir, 'nCoV_100k_train_utf_8.labled.csv')
-train_100k_path = os.path.join(train_dataset_dir, 'test.csv')
+train_100k_path = os.path.join(train_dataset_dir, 'nCoV_100k_train_utf_8.labled.csv')
 train_900k_path = os.path.join(train_dataset_dir, 'nCoV_900k_train_utf_8.unlabled.csv')
 submit_example_path = os.path.join(input_dir, 'submit_example.csv')
 
 # -* generate dir/path *-
 log_dir = os.path.join(data_dir, 'log')
 output_dir = os.path.join(data_dir, 'output')
+submit_path = os.path.join(input_dir, 'submit.csv')
 labels = [-1, 0, 1]  # 消极 中性 积极
-output_categories = '情感倾向'
+
 input_categories = '微博中文内容'
+target_categories = '发布人账号'
+output_categories = '情感倾向'
 
-BATCH = 4
-EPOCHS = 30
+BATCH = 64
+EPOCHS = 3
 # ############################### model parameters
-dataset = 'evasampledata4'
-data_type = 'csv'
-
 topics = None
 # 是否按照批量预测
 predict_batch = True
@@ -64,13 +63,13 @@ l2reg = 0.01
 # 步长
 log_step = 5
 # 嵌入的维度
-embed_dim = 128
+embed_dim = 300
 # 隐藏层神经元个数
 hidden_dim = 300
 # bert 维度
 bert_dim = 768
 # 序例最大的长度
-max_seq_len = 140
+max_seq_len = 128
 # 极性的维度
 polarities_dim = 3
 # hops
@@ -85,8 +84,6 @@ valset_ratio = 0.2
 local_context_focus = 'cdm'
 # semantic-relative-distance, see the paper of LCF-BERT model
 SRD = 3
-# k-fold cross validation
-# cross_val_fold = 8
 
 # ############################### other parameters
 # default hyper-parameters for LCF-BERT model is as follws:
