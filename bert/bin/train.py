@@ -1,28 +1,27 @@
-# -*- coding: utf-8 -*-
-# file: train.py
-# author: songyouwei <youwei0314@gmail.com>
-# Copyright (C) 2018. All Rights Reserved.
-import logging
-import argparse
-import math
+# -*-coding:utf-8 -*-
 import os
 import sys
-from time import strftime, localtime
-import random
-import numpy
 
-from pytorch_transformers import BertModel
+os.chdir(sys.path[0])
+import math
+import torch
+import random
+import logging
+import argparse
+import numpy as np
+import pandas as pd
+import torch.nn as nn
 
 from sklearn import metrics
-import torch
-import torch.nn as nn
+from time import strftime, localtime
+from pytorch_transformers import BertModel
 from torch.utils.data import DataLoader, random_split
 
+from bert.conf import args
 from bert.lib.data_util import build_tokenizer, build_embedding_matrix, Tokenizer4Bert, ABSADataset
-
-from models import LSTM, IAN, MemNet, RAM, TD_LSTM, Cabasc, ATAE_LSTM, TNet_LF, AOA, MGAN, LCF_BERT
-from models.aen import AEN_BERT
-from models.bert_spc import BERT_SPC
+from bert.core import LSTM, IAN, MemNet, RAM, TD_LSTM, Cabasc, ATAE_LSTM, TNet_LF, AOA, MGAN, LCF_BERT
+from bert.core.aen import AEN_BERT
+from bert.core.bert_spc import BERT_SPC
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -48,8 +47,13 @@ class Instructor:
                 dat_fname='{0}_{1}_embedding_matrix.dat'.format(str(opt.embed_dim), opt.dataset))
             self.model = opt.model_class(embedding_matrix, opt).to(opt.device)
 
-        self.trainset = ABSADataset(opt.dataset_file['train'], tokenizer)
-        self.testset = ABSADataset(opt.dataset_file['test'], tokenizer)
+        df_train = pd.read_csv(args.train_100k_path, engine='python', sep=',', encoding='utf-8')
+        df_train = df_train[df_train[args.output_categories].isin(['-1', '0', '1'])]
+        df_test = pd.read_csv(args.test_10k_path, engine='python', sep=',', encoding='utf-8')
+        df_sub = pd.read_csv(args.submit_example_path)
+
+        self.trainset = ABSADataset(df_train, tokenizer)
+        self.testset = ABSADataset(df_test, tokenizer)
         assert 0 <= opt.valset_ratio < 1
         if opt.valset_ratio > 0:
             valset_len = int(len(self.trainset) * opt.valset_ratio)
@@ -180,7 +184,7 @@ def main():
     # Hyper Parameters
     parser = argparse.ArgumentParser()
     parser.add_argument('--model_name', default='bert_spc', type=str)
-    parser.add_argument('--dataset', default='twitter', type=str, help='twitter, restaurant, laptop')
+    parser.add_argument('--dataset', default='df', type=str, help='df, ...')
     parser.add_argument('--optimizer', default='adam', type=str)
     parser.add_argument('--initializer', default='xavier_uniform_', type=str)
     parser.add_argument('--learning_rate', default=2e-5, type=float, help='try 5e-5, 2e-5 for BERT, 1e-3 for others')
@@ -192,8 +196,7 @@ def main():
     parser.add_argument('--embed_dim', default=300, type=int)
     parser.add_argument('--hidden_dim', default=300, type=int)
     parser.add_argument('--bert_dim', default=768, type=int)
-    # parser.add_argument('--pretrained_bert_name', default='bert-base-uncased', type=str)
-    parser.add_argument('--pretrained_bert_name', default='/home/wjunneng/Ubuntu/NLP/情感分析/ABSA-PyTorch/model', type=str)
+    parser.add_argument('--pretrained_bert_name', default=args.pretain_model_dir, type=str)
     parser.add_argument('--max_seq_len', default=80, type=int)
     parser.add_argument('--polarities_dim', default=3, type=int)
     parser.add_argument('--hops', default=3, type=int)
@@ -209,12 +212,17 @@ def main():
 
     if opt.seed is not None:
         random.seed(opt.seed)
-        numpy.random.seed(opt.seed)
+        np.random.seed(opt.seed)
         torch.manual_seed(opt.seed)
         torch.cuda.manual_seed(opt.seed)
         torch.backends.cudnn.deterministic = True
         torch.backends.cudnn.benchmark = False
 
+    # default hyper-parameters for LCF-BERT model is as follws:
+    # lr: 2e-5
+    # l2: 1e-5
+    # batch size: 16
+    # num epochs: 5
     model_classes = {
         'lstm': LSTM,
         'td_lstm': TD_LSTM,
@@ -229,24 +237,11 @@ def main():
         'bert_spc': BERT_SPC,
         'aen_bert': AEN_BERT,
         'lcf_bert': LCF_BERT,
-        # default hyper-parameters for LCF-BERT model is as follws:
-        # lr: 2e-5
-        # l2: 1e-5
-        # batch size: 16
-        # num epochs: 5
     }
     dataset_files = {
-        'twitter': {
-            'train': './datasets/acl-14-short-data/train.raw',
-            'test': './datasets/acl-14-short-data/test.raw'
-        },
-        'restaurant': {
-            'train': './datasets/semeval14/Restaurants_Train.xml.seg',
-            'test': './datasets/semeval14/Restaurants_Test_Gold.xml.seg'
-        },
-        'laptop': {
-            'train': './datasets/semeval14/Laptops_Train.xml.seg',
-            'test': './datasets/semeval14/Laptops_Test_Gold.xml.seg'
+        'df': {
+            'train': args.train_100k_path,
+            'test': args.test_10k_path
         }
     }
     input_colses = {

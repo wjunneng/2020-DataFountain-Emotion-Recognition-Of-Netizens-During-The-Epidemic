@@ -8,6 +8,7 @@ import os
 import pickle
 import numpy as np
 import torch
+import pandas as pd
 from torch.utils.data import Dataset
 from pytorch_transformers import BertTokenizer
 
@@ -124,16 +125,12 @@ class Tokenizer4Bert:
 
 
 class ABSADataset(Dataset):
-    def __init__(self, fname, tokenizer):
-        fin = open(fname, 'r', encoding='utf-8', newline='\n', errors='ignore')
-        lines = fin.readlines()
-        fin.close()
-
+    def __init__(self, df: pd.DataFrame, tokenizer):
         all_data = []
-        for i in range(0, len(lines), 3):
-            text_left, _, text_right = [s.lower().strip() for s in lines[i].partition("$T$")]
-            aspect = lines[i + 1].lower().strip()
-            polarity = lines[i + 2].strip()
+        for i in range(0, len(df), 3):
+            text_left, _, text_right = [s.lower().strip() for s in df[i].partition("$T$")]
+            aspect = df[i + 1].lower().strip()
+            polarity = df[i + 2].strip()
 
             text_raw_indices = tokenizer.text_to_sequence(text_left + " " + aspect + " " + text_right)
             text_raw_without_aspect_indices = tokenizer.text_to_sequence(text_left + " " + text_right)
