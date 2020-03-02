@@ -40,7 +40,7 @@ submit_example_path = os.path.join(input_dir, 'submit_example.csv')
 # -* generate dir/path *-
 log_dir = os.path.join(data_dir, 'log')
 output_dir = os.path.join(data_dir, 'output')
-submit_path = os.path.join(input_dir, 'submit.csv')
+submit_path = os.path.join(output_dir, 'submit.csv')
 labels = ['-1', '0', '1']  # 消极 中性 积极
 
 input_categories = '微博中文内容'
