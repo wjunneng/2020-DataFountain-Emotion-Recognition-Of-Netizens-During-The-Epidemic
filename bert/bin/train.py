@@ -118,7 +118,7 @@ class Instructor(object):
                 global_step += 1
                 optimizer.zero_grad()
 
-                inputs = [sample_batched[col].to(DEVICE) for col in self.args.inputs_cols]
+                inputs = [sample_batched[col].to(DEVICE) for col in self.args.inputs_columns]
                 outputs = self.model(inputs)
                 targets = torch.tensor(sample_batched['polarity']).to(DEVICE)
 

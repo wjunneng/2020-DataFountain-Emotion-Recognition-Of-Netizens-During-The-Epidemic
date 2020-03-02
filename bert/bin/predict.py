@@ -7,7 +7,6 @@ os.chdir(sys.path[0])
 import torch
 import math
 import numpy as np
-import pandas as pd
 from pytorch_transformers import BertModel
 from torch.utils.data import DataLoader
 
@@ -38,7 +37,7 @@ class Predict(object):
         predict_loader = DataLoader(dataset=predict_set, batch_size=len(TEXT))
         outputs = None
         for i_batch, sample_batched in enumerate(predict_loader):
-            inputs = [sample_batched[col].to(DEVICE) for col in self.args.inputs_cols[self.args.model_name]]
+            inputs = [sample_batched[col].to(DEVICE) for col in self.args.inputs_columns[self.args.model_name]]
             outputs = self.net(inputs)
 
         outputs = torch.argmax(outputs, dim=-1).cpu().numpy().tolist()
