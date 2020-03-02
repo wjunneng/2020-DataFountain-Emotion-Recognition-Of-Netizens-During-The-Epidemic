@@ -132,19 +132,18 @@ class Instructor(object):
                 if global_step % self.args.log_step == 0:
                     train_acc = n_correct / n_total
                     train_loss = loss_total / n_total
-                    logger.info('step: {}, loss: {:.4f}, acc: {:.4f}'.format(i_batch * self.args.log_step, train_loss,
-                                                                             train_acc))
+                    logger.info('loss: {:.4f}, acc: {:.4f}'.format(train_loss, train_acc))
 
-                    self.model.eval()
-                    val_acc, val_f1 = Util.evaluate_acc_f1(model=self.model, args=self.args, data_loader=val_data_loader)
-                    logger.info('> val_acc: {:.4f}, val_f1: {:.4f}'.format(val_acc, val_f1))
-                    if val_acc > max_val_acc:
-                        max_val_acc = val_acc
-                        best_model_path = self.args.output_dir
-                        Util.save_model(model=self.model, output_dir=best_model_path)
-                        logger.info('>> saved: {}'.format(best_model_path))
-                    if val_f1 > max_val_f1:
-                        max_val_f1 = val_f1
+            self.model.eval()
+            val_acc, val_f1 = Util.evaluate_acc_f1(model=self.model, args=self.args, data_loader=val_data_loader)
+            logger.info('> val_acc: {:.4f}, val_f1: {:.4f}'.format(val_acc, val_f1))
+            if val_acc > max_val_acc:
+                max_val_acc = val_acc
+                best_model_path = self.args.output_dir
+                Util.save_model(model=self.model, output_dir=best_model_path)
+                logger.info('>> saved: {}'.format(best_model_path))
+            if val_f1 > max_val_f1:
+                max_val_f1 = val_f1
 
         logger.info('> max_val_acc: {0} max_val_f1: {1}'.format(max_val_acc, max_val_f1))
         logger.info('> train save model path: {}'.format(best_model_path))

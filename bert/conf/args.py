@@ -42,15 +42,15 @@ input_categories = '微博中文内容'
 target_categories = '发布人账号'
 output_categories = '情感倾向'
 
-BATCH = 8
-EPOCHS = 1
+BATCH = 16
+EPOCHS = 3
 # ############################### model parameters
 topics = None
 # 是否按照批量预测
 predict_batch = True
 
 # 模型名称
-model_name = 'lcf_bert'
+model_name = 'aen_bert'
 # 优化算法
 optimizer = 'adam'
 # 初始化方式
@@ -62,7 +62,7 @@ dropout = 0.1
 # 权重
 l2reg = 0.01
 # 步长
-log_step = 100
+log_step = 200
 # 嵌入的维度
 embed_dim = 300
 # 隐藏层神经元个数
