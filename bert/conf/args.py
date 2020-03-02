@@ -42,7 +42,7 @@ input_categories = '微博中文内容'
 target_categories = '发布人账号'
 output_categories = '情感倾向'
 
-BATCH = 16
+BATCH = 24
 EPOCHS = 3
 # ############################### model parameters
 topics = None
