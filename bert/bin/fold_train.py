@@ -97,11 +97,11 @@ class Instructor(object):
                                                       groups=self.train_target)):
                 logger.info('>' * 20)
                 logger.info('fold: {}'.format(fold))
-                train_text_fold = self.train_text[train_index]
+                train_text_fold = self.train_text[train_index].astype(str)
                 train_stance_fold = self.train_stance[train_index].astype(str)
                 train_target_fold = self.train_target[train_index]
 
-                valid_text_fold = self.train_text[valid_index]
+                valid_text_fold = self.train_text[valid_index].astype(str)
                 valid_stance_fold = self.train_stance[valid_index].astype(str)
                 valid_target_fold = self.train_target[valid_index]
 
@@ -164,8 +164,11 @@ class Instructor(object):
                     TARGET = [i for i in batch_target_data]
                     TEXT = [i for i in batch_text_data]
 
+                    TEXT = PreProcessing(np.asarray(TEXT).astype(str)).get_file_text()
+
                     self.predict_loader = DataLoader(
-                        dataset=ABSADataset(data_type=None, fname=(TARGET, TEXT, None), tokenizer=self.tokenizer),
+                        dataset=ABSADataset(data_type=None, fname=(TARGET, TEXT.tolist(), None),
+                                            tokenizer=self.tokenizer),
                         batch_size=self.args.BATCH)
 
                     outputs = None
