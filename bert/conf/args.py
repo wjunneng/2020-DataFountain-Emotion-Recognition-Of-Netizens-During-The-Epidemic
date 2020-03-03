@@ -44,7 +44,7 @@ submit_path = os.path.join(data_dir, 'submit.csv')
 labels = ['-1', '0', '1']  # 消极 中性 积极
 
 input_categories = '微博中文内容'
-target_categories = '发布人账号'
+target_categories = '微博发布时间'
 output_categories = '情感倾向'
 
 BATCH = 6
