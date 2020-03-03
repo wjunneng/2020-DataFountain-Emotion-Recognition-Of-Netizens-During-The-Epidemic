@@ -70,7 +70,7 @@ class Instructor(object):
         # loss and optimizer
         # criterion = nn.CrossEntropyLoss()
         # 标签平滑
-        criterion = LabelSmoothingLoss(classes=len(self.args.labels), smoothing=0.2)
+        criterion = LabelSmoothingLoss(classes=len(self.args.labels), smoothing=0.4)
         # Focal Loss
         # criterion = FocalLoss(class_num=len(self.args.labels))
 
