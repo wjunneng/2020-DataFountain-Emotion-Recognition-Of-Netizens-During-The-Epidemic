@@ -28,13 +28,13 @@ train_dataset_dir = os.path.join(input_dir, 'train_dataset')
 pretain_model_dir = os.path.join(data_dir, 'pretain_model')
 
 # -* test *-
-# test_10k_path = os.path.join(test_dataset_dir, 'nCov_10k_test_utf_8.csv')
-# train_100k_path = os.path.join(train_dataset_dir, 'test.csv')
-# train_900k_path = os.path.join(train_dataset_dir, 'test.csv')
-
 test_10k_path = os.path.join(test_dataset_dir, 'nCov_10k_test_utf_8.csv')
-train_100k_path = os.path.join(train_dataset_dir, 'nCoV_100k_train_utf_8.labled.csv')
-train_900k_path = os.path.join(train_dataset_dir, 'nCoV_900k_train_utf_8.unlabled.csv')
+train_100k_path = os.path.join(train_dataset_dir, 'test.csv')
+train_900k_path = os.path.join(train_dataset_dir, 'test.csv')
+
+# test_10k_path = os.path.join(test_dataset_dir, 'nCov_10k_test_utf_8.csv')
+# train_100k_path = os.path.join(train_dataset_dir, 'nCoV_100k_train_utf_8.labled.csv')
+# train_900k_path = os.path.join(train_dataset_dir, 'nCoV_900k_train_utf_8.unlabled.csv')
 submit_example_path = os.path.join(input_dir, 'submit_example.csv')
 
 # -* generate dir/path *-
@@ -47,7 +47,7 @@ input_categories = '微博中文内容'
 target_categories = '发布人账号'
 output_categories = '情感倾向'
 
-BATCH = 4
+BATCH = 6
 EPOCHS = 1
 do_fold = True
 # ############################### model parameters
@@ -84,7 +84,7 @@ hops = 3
 # e.g. cuda:0
 device = None
 # set seed for reproducibility
-seed = None
+seed = 42
 # set ratio between 0 and 1 for validation support
 valset_ratio = 0.2
 # local context focus mode, cdw or cdm

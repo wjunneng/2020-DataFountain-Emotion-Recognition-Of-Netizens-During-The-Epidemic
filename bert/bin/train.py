@@ -57,7 +57,7 @@ class Instructor(object):
 
         train_target = df_train[self.args.target_categories].values
         train_text = df_train[self.args.input_categories].values
-        train_stance = df_train[self.args.output_categories].values
+        train_stance = df_train[self.args.output_categories].values.astype(str)
 
         # ############################# 特征词库的方法 效果不好
         # train_data = pd.DataFrame(data=[stance, target, text]).T
@@ -68,7 +68,7 @@ class Instructor(object):
         self.target_set = set()
         for tar in train_target:
             self.target_set.add(tar)
-        # train_text = PreProcessing(train_text).get_file_text()
+        train_text = PreProcessing(train_text).get_file_text()
 
         # ############################# 同义词替换的方法 效果不好
         # self.synonyms = SynonymsReplacer()
@@ -118,7 +118,7 @@ class Instructor(object):
                 global_step += 1
                 optimizer.zero_grad()
 
-                inputs = [sample_batched[col].to(DEVICE) for col in self.args.inputs_columns]
+                inputs = [sample_batched[col].to(DEVICE) for col in self.args.inputs_columns[self.args.model_name]]
                 outputs = self.model(inputs)
                 targets = torch.tensor(sample_batched['polarity']).to(DEVICE)
 

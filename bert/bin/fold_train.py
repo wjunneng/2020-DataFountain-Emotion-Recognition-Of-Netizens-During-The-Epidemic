@@ -105,6 +105,9 @@ class Instructor(object):
                 valid_stance_fold = self.train_stance[valid_index].astype(str)
                 valid_target_fold = self.train_target[valid_index]
 
+                train_text_fold = PreProcessing(train_text_fold).get_file_text()
+                valid_text_fold = PreProcessing(valid_text_fold).get_file_text()
+
                 print('train.shape: {}'.format(train_text_fold.shape))
                 print('valid.shape: {}'.format(valid_text_fold.shape))
 

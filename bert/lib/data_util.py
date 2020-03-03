@@ -460,11 +460,16 @@ class PreProcessing(object):
         self.maxLen = 0
         self.fileText = fileText.tolist()
 
-        self.remove_number_sign()
-        self.refresh_eng_data()
-        self.refresh_chn_data()
+        # self.remove_number_sign()
+        # self.refresh_eng_data()
+        # self.refresh_chn_data()
         self.hant_to_hans()
 
+    # 删除相邻两个# 之间的数据
+    def remove_number_sign(self):
+        self.fileText = [Util.remove_number_sign(i, 0) for i in self.fileText]
+
+    # 更新english数据
     def refresh_eng_data(self):
         fileText = []
         for istring in self.fileText:
@@ -504,6 +509,7 @@ class PreProcessing(object):
 
             self.fileText = fileText
 
+    # 更新chinese数据
     def refresh_chn_data(self):
         """
          全角数字转半角
@@ -530,6 +536,7 @@ class PreProcessing(object):
 
         self.fileText = fileText
 
+    # 繁体转简体
     def hant_to_hans(self):
         _zh2Hant, _zh2Hans = {}, {}
         for old, new in ((zh_wiki.zh2Hant, _zh2Hant), (zh_wiki.zh2Hans, _zh2Hans)):
@@ -545,9 +552,7 @@ class PreProcessing(object):
             for hant in _zh2Hant.keys():
                 self.fileText[index] = self.fileText[index].replace(hant, _zh2Hant[hant])
 
-    def remove_number_sign(self):
-        self.fileText = [Util.remove_number_sign(i, 0) for i in self.fileText]
-
+    # 获取数据
     def get_file_text(self):
         return np.asarray(self.fileText)
 
