@@ -64,7 +64,7 @@ initializer = 'xavier_uniform_'
 # 'try 5e-5, 2e-5 for BERT, 1e-3 for others'
 learning_rate = 2e-5
 # 随机失活率
-dropout = 0.15
+dropout = 0.1
 # 权重
 l2reg = 0.01
 # 步长
