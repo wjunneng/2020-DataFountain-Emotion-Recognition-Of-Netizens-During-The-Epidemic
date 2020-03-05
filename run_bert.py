@@ -35,7 +35,6 @@ from sklearn.metrics import f1_score
 from torch.utils.data.distributed import DistributedSampler
 from pytorch_transformers import AdamW, WarmupLinearSchedule
 from pytorch_transformers.tokenization_bert import BertTokenizer
-from pytorch_pretrained_bert.optimization import WarmupLinearSchedule
 from pytorch_transformers.modeling_bert import BertForSequenceClassification, BertConfig
 from torch.utils.data import (DataLoader, RandomSampler, SequentialSampler, TensorDataset)
 
@@ -47,6 +46,8 @@ MODEL_CLASSES = {'bert': (BertConfig, BertForSequenceClassification, BertTokeniz
 ALL_MODELS = sum((tuple(conf.pretrained_config_archive_map.keys()) for conf in (BertConfig,)), ())
 
 logger = logging.getLogger(__name__)
+
+CUDA_LAUNCH_BLOCKING = 1
 
 
 class InputExample(object):
@@ -156,7 +157,7 @@ class BERT(object):
                 InputFeatures(
                     example_id=example.guid,
                     choices_features=choices_features,
-                    label=int(label)
+                    label=int(label) + 1
                 )
             )
         return features
@@ -165,7 +166,7 @@ class BERT(object):
     def accuracy(out, labels):
         outputs = np.argmax(out, axis=1)
 
-        return f1_score(labels, outputs, labels=[-1, 0, 1], average='macro')
+        return f1_score(labels, outputs, labels=[0, 1, 2], average='macro')
 
     @staticmethod
     def select_field(features, field):
@@ -300,7 +301,7 @@ def main():
 
     # Setup CUDA, GPU & distributed training
     if args.local_rank == -1 or args.no_cuda:
-        device = torch.device("cuda" if torch.cuda.is_available() and not args.no_cuda else "cpu")
+        device = torch.device("cuda:0" if torch.cuda.is_available() and not args.no_cuda else "cpu")
         args.n_gpu = torch.cuda.device_count()
     else:  # Initializes the distributed backend which will take care of sychronizing nodes/GPUs
         torch.cuda.set_device(args.local_rank)
@@ -326,14 +327,17 @@ def main():
 
     tokenizer = BertTokenizer.from_pretrained(args.model_name_or_path, do_lower_case=args.do_lower_case)
 
-    config = BertConfig.from_pretrained(args.model_name_or_path, num_labels=2)
+    if args.config_name != '':
+        config = BertConfig.from_pretrained(os.path.join(args.model_name_or_path, args.config_name), num_labels=3)
+    else:
+        config = BertConfig.from_pretrained(args.model_name_or_path, num_labels=3)
 
     # Prepare model
-    model = BertForSequenceClassification.from_pretrained(args.model_name_or_path, args, config=config)
+    model = BertForSequenceClassification.from_pretrained(args.model_name_or_path, args, config=config).to(device)
 
     if args.fp16:
         model.half()
-    model.to(device)
+
     if args.local_rank != -1:
         try:
             from apex.parallel import DistributedDataParallel as DDP
@@ -380,6 +384,7 @@ def main():
         ]
 
         optimizer = AdamW(optimizer_grouped_parameters, lr=args.learning_rate, eps=args.adam_epsilon)
+        print('warmup_steps: {}'.format((args.warmup_steps, args.train_steps)))
         scheduler = WarmupLinearSchedule(optimizer, warmup_steps=args.warmup_steps, t_total=args.train_steps)
 
         global_step = 0

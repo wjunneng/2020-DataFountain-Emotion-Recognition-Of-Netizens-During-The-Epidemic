@@ -14,6 +14,7 @@ if os.path.exists(args.eda_report_path):
 
 
 def analyzefile(file):
+    print(file)
     df = pd.read_csv(file)
     os.system("touch " + os.path.basename(args.eda_report_path))
     os.system(
@@ -52,7 +53,7 @@ def cal(text):
 
 
 def generate_fold_data(train_df, test_df):
-    train_df = train_df[train_df[args.output_categories].notnull()]
+    train_df = train_df[train_df[args.output_categories].isin(['-1', '0', '1'])]
     test_df[args.input_categories] = test_df[args.input_categories].fillna('无。')
     train_df[args.input_categories] = train_df[args.input_categories].fillna('无。')
     test_df[args.output_categories] = 0
@@ -86,7 +87,7 @@ def generate_fold_data(train_df, test_df):
             encoding='utf-8')
         train_df.iloc[dev_index].to_csv(
             os.path.join(args.eda_dir, "data_{}".format(i), args.dev_20k_name), index=False, sep='\t', encoding='utf-8')
-        test_df.to_csv(os.path.join(args.eda_dir, "data_{}".format(i), args.test_10k_path), index=False,
+        test_df.to_csv(os.path.join(args.eda_dir, "data_{}".format(i), args.test_10k_name), index=False,
                        sep='\t', encoding='utf-8')
 
 
