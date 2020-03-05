@@ -29,3 +29,12 @@ eda_report_path = os.path.join(eda_dir, 'report.txt')
 eda_data_dir = os.path.join(eda_dir, 'data')
 eda_data_train_10k_path = os.path.join(eda_data_dir, 'nCoV_100k_train_utf_8.labled.csv')
 eda_data_test_10k_path = os.path.join(eda_data_dir, 'nCov_10k_test_utf_8.csv')
+
+id = '微博id'
+content = '微博中文内容'
+title = '发布人账号'
+flag = '情感倾向'
+
+test_10k_name = 'nCov_10k_test_utf_8'
+dev_20k_name = 'nCoV_20k_dev_utf_8.labled.csv'
+train_80k_name = 'nCoV_80k_train_utf_8.labled.csv'
