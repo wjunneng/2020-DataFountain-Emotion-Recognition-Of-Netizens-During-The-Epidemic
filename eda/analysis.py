@@ -60,8 +60,8 @@ def generate_fold_data(train_df, test_df):
 
     if os.path.exists(args.eda_data_dir) is False:
         os.makedirs(args.eda_data_dir)
-    test_df.to_csv(args.eda_data_test_10k_path, index=False, sep='\t', encoding='utf-8')
-    train_df.to_csv(args.eda_data_train_10k_path, index=False, sep='\t', encoding='utf-8')
+    test_df.to_csv(args.eda_data_test_10k_path, index=False, encoding='utf-8')
+    train_df.to_csv(args.eda_data_train_10k_path, index=False, encoding='utf-8')
     index = set(range(train_df.shape[0]))
     K_fold = []
     for i in range(5):
@@ -83,12 +83,12 @@ def generate_fold_data(train_df, test_df):
             if j != i:
                 train_index += K_fold[j]
         train_df.iloc[train_index].to_csv(
-            os.path.join(args.eda_dir, "data_{}".format(i), args.train_80k_name), index=False, sep='\t',
+            os.path.join(args.eda_dir, "data_{}".format(i), args.train_80k_name), index=False,
             encoding='utf-8')
         train_df.iloc[dev_index].to_csv(
-            os.path.join(args.eda_dir, "data_{}".format(i), args.dev_20k_name), index=False, sep='\t', encoding='utf-8')
+            os.path.join(args.eda_dir, "data_{}".format(i), args.dev_20k_name), index=False, encoding='utf-8')
         test_df.to_csv(os.path.join(args.eda_dir, "data_{}".format(i), args.test_10k_name), index=False,
-                       sep='\t', encoding='utf-8')
+                       encoding='utf-8')
 
 
 # """
