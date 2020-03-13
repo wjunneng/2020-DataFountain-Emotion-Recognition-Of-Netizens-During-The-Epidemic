@@ -184,8 +184,8 @@ class BERT(object):
         df = pd.read_csv(input_file, encoding='utf-8')
         examples = []
         if '·' in df[arguments.flag].values:
-            print('input_file: {}'.format(input_file))
-            print('>' * 100)
+            logger.info('input_file: {}'.format(input_file))
+            logger.info('>' * 100)
         for val in df[[arguments.id, arguments.content, arguments.title, arguments.flag]].values:
             examples.append(InputExample(guid=val[0], text_a=val[1], text_b=val[2], label=val[3]))
         return examples
@@ -195,17 +195,17 @@ def main():
     parser = argparse.ArgumentParser()
 
     # Required parameters
-    parser.add_argument("--data_dir", default=None, type=str, required=True,
+    parser.add_argument("--data_dir", default=None, type=str,
                         help="The input data dir. Should contain the .tsv files (or other data files) for the task.")
-    parser.add_argument("--model_type", default=None, type=str, required=True,
+    parser.add_argument("--model_type", default=None, type=str,
                         help="Model type selected in the list: " + ", ".join(MODEL_CLASSES.keys()))
-    parser.add_argument("--model_name_or_path", default=None, type=str, required=True,
+    parser.add_argument("--model_name_or_path", default=None, type=str,
                         help="Path to pre-trained model or shortcut name selected in the list: " + ", ".join(
                             ALL_MODELS))
-    parser.add_argument("--meta_path", default=None, type=str, required=False,
+    parser.add_argument("--meta_path", default=None, type=str,
                         help="Path to pre-trained model or shortcut name selected in the list: " + ", ".join(
                             ALL_MODELS))
-    parser.add_argument("--output_dir", default=None, type=str, required=True,
+    parser.add_argument("--output_dir", default=None, type=str,
                         help="The output directory where the model predictions and checkpoints will be written.")
 
     # Other parameters
@@ -305,6 +305,30 @@ def main():
 
     args.device = device
 
+    # ##################################### 线下测试 #####################################
+    # args.config_name = 'bert_config.json'
+    # args.model_type = 'bert'
+    # args.model_name_or_path = 'premodels/chinese_roberta_wwm_ext_pytorch'
+    # args.do_train = False
+    # args.do_eval = False
+    # args.do_test = True
+    # args.data_dir = os.path.join(arguments.eda_dir, 'data_0')
+    # args.output_dir = '/home/wjunneng/Ubuntu/2020-DataFountain-Emotion-Recognition-Of-Netizens-During-The-Epidemic/models/20200313/model_bert0'
+    # args.max_seq_length = 64
+    # args.split_num = 3
+    # args.lstm_hidden_size = 512
+    # args.lstm_layers = 2
+    # args.lstm_dropout = 0.1
+    # args.eval_steps = 20
+    # args.per_gpu_train_batch_size = 8
+    # args.gradient_accumulation_steps = 1
+    # args.per_gpu_eval_batch_size = 16
+    # args.learning_rate = 5e-6
+    # args.adam_epsilon = 1e-6
+    # args.weight_decay = 0.01
+    # args.train_steps = 200
+    # ##################################### 线下测试 #####################################
+
     # Setup logging
     logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
                         level=logging.INFO if args.local_rank in [-1, 0] else logging.WARN)
@@ -381,7 +405,7 @@ def main():
         ]
 
         optimizer = AdamW(optimizer_grouped_parameters, lr=args.learning_rate, eps=args.adam_epsilon)
-        print('warmup_steps: {}'.format((args.warmup_steps, args.train_steps)))
+        logger.info('warmup_steps: {}'.format((args.warmup_steps, args.train_steps)))
         scheduler = WarmupLinearSchedule(optimizer, warmup_steps=args.warmup_steps, t_total=args.train_steps)
 
         global_step = 0
@@ -508,17 +532,16 @@ def main():
                     writer.write('*' * 80)
                     writer.write('\n')
                 if eval_accuracy > best_acc and 'dev' in arguments.dev_20k_name:
-                    print("=" * 80)
-                    print("Best F1", eval_accuracy)
-                    print("Saving Model......")
+                    logger.info("=" * 80)
+                    logger.info("Best F1", eval_accuracy)
+                    logger.info("Saving Model......")
                     best_acc = eval_accuracy
                     # Save a trained model Only save the model it-self
                     model_to_save = model.module if hasattr(model, 'module') else model
                     output_model_file = os.path.join(args.output_dir, "pytorch_model.bin")
                     torch.save(model_to_save.state_dict(), output_model_file)
-                    print("=" * 80)
                 else:
-                    print("=" * 80)
+                    logger.info("=" * 80)
     if args.do_test:
         del model
         gc.collect()
@@ -560,7 +583,6 @@ def main():
             eval_dataloader = DataLoader(eval_data, sampler=eval_sampler, batch_size=args.eval_batch_size)
 
             model.eval()
-            eval_loss, eval_accuracy, nb_eval_steps, nb_eval_examples = 0, 0, 0, 0
             for input_ids, input_mask, segment_ids, label_ids in eval_dataloader:
                 input_ids = input_ids.to(device)
                 input_mask = input_mask.to(device)
@@ -576,14 +598,14 @@ def main():
 
             gold_labels = np.concatenate(gold_labels, 0)
             logits = np.concatenate(inference_labels, 0)
-            print(flag, BERT.accuracy(logits, gold_labels))
+            logger.info(flag, BERT.accuracy(logits, gold_labels))
 
             if flag == 'test':
                 df = pd.read_csv(os.path.join(args.data_dir, file), encoding='utf-8')
                 df['label_0'] = logits[:, 0]
                 df['label_1'] = logits[:, 1]
                 df['label_2'] = logits[:, 2]
-                df[['微博id', 'label_0', 'label_1', 'label_1']].to_csv(os.path.join(args.output_dir, "sub.csv"),
+                df[['微博id', 'label_0', 'label_1', 'label_2']].to_csv(os.path.join(args.output_dir, "sub.csv"),
                                                                      index=False)
 
 

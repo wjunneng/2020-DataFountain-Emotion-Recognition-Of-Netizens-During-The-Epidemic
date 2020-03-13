@@ -1,7 +1,7 @@
 DATE=$(date +%Y%m%d)
 mkdir models/$DATE
 export CUDA_VISIBLE_DEVICES=0
-for((i=0;i<1;i++));
+for((i=0;i<5;i++));
 do
 
 python run_bert.py \
@@ -13,19 +13,19 @@ python run_bert.py \
 --do_test \
 --data_dir eda/data_$i \
 --output_dir models/$DATE/model_bert$i \
---max_seq_length 256 \
+--max_seq_length 128 \
 --split_num 3 \
 --lstm_hidden_size 512 \
 --lstm_layers 2 \
 --lstm_dropout 0.1 \
---eval_steps 200 \
---per_gpu_train_batch_size 1 \
+--eval_steps 50 \
+--per_gpu_train_batch_size 16 \
 --gradient_accumulation_steps 1 \
---per_gpu_eval_batch_size 32 \
+--per_gpu_eval_batch_size 16 \
 --learning_rate 5e-6 \
 --adam_epsilon 1e-6 \
 --weight_decay 0.01 \
---train_steps 200
+--train_steps 500
 
 done  
 
