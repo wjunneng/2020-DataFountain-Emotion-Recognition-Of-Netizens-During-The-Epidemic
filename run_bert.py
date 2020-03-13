@@ -533,7 +533,7 @@ def main():
                     writer.write('\n')
                 if eval_accuracy > best_acc and 'dev' in arguments.dev_20k_name:
                     logger.info("=" * 80)
-                    logger.info("Best F1", eval_accuracy)
+                    logger.info("Best F1 %f", eval_accuracy)
                     logger.info("Saving Model......")
                     best_acc = eval_accuracy
                     # Save a trained model Only save the model it-self
