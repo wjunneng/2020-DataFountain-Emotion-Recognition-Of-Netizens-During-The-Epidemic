@@ -27,6 +27,7 @@ import logging
 import random
 import numpy as np
 import pandas as pd
+import warnings
 
 from io import open
 from tqdm import tqdm
@@ -46,6 +47,7 @@ ALL_MODELS = sum((tuple(conf.pretrained_config_archive_map.keys()) for conf in (
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
                     level=logging.INFO)
 logger = logging.getLogger(__name__)
+warnings.filterwarnings('ignore')
 
 
 class InputExample(object):
@@ -598,7 +600,7 @@ def main():
 
             gold_labels = np.concatenate(gold_labels, 0)
             logits = np.concatenate(inference_labels, 0)
-            logger.info(flag, BERT.accuracy(logits, gold_labels))
+            logger.info('flag: {0}, accuracy: {1}'.format(flag, BERT.accuracy(logits, gold_labels)))
 
             if flag == 'test':
                 df = pd.read_csv(os.path.join(args.data_dir, file), encoding='utf-8')
