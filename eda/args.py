@@ -6,8 +6,8 @@ os.chdir(sys.path[0])
 
 # -* orignal dir/path *-
 # project_dir = os.path.dirname(os.path.abspath('..'))
-# project_dir = '/home/wjunneng/Ubuntu/2020-DataFountain-Emotion-Recognition-Of-Netizens-During-The-Epidemic'
-project_dir = '/content/2020-DataFountain-Emotion-Recognition-Of-Netizens-During-The-Epidemic'
+project_dir = '/home/wjunneng/Ubuntu/2020-DataFountain-Emotion-Recognition-Of-Netizens-During-The-Epidemic'
+# project_dir = '/content/2020-DataFountain-Emotion-Recognition-Of-Netizens-During-The-Epidemic'
 
 data_dir = os.path.join(project_dir, 'data')
 input_dir = os.path.join(data_dir, 'input')
@@ -31,6 +31,14 @@ eda_report_path = os.path.join(eda_dir, 'report.txt')
 eda_data_dir = os.path.join(eda_dir, 'data')
 eda_data_train_10k_path = os.path.join(eda_data_dir, 'nCoV_100k_train_utf_8.labled.csv')
 eda_data_test_10k_path = os.path.join(eda_data_dir, 'nCov_10k_test_utf_8.csv')
+
+submit_example_path = os.path.join(input_dir, 'submit_example.csv')
+eda_submission_path = os.path.join(eda_data_dir, 'submission.csv')
+eda_data_0_sub_path = os.path.join(eda_dir, 'data_0/sub.csv')
+eda_data_1_sub_path = os.path.join(eda_dir, 'data_1/sub.csv')
+eda_data_2_sub_path = os.path.join(eda_dir, 'data_2/sub.csv')
+eda_data_3_sub_path = os.path.join(eda_dir, 'data_3/sub.csv')
+eda_data_4_sub_path = os.path.join(eda_dir, 'data_4/sub.csv')
 
 id = '微博id'
 content = '微博中文内容'

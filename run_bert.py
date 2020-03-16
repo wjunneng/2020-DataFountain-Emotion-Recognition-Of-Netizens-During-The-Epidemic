@@ -611,5 +611,28 @@ def main():
                                                                      index=False)
 
 
+def generate_submission():
+    submit_example = pd.read_csv(arguments.submit_example_path, encoding='utf-8')
+    eda_data_0_sub = pd.read_csv(arguments.eda_data_0_sub_path, encoding='utf-8')
+    eda_data_1_sub = pd.read_csv(arguments.eda_data_1_sub_path, encoding='utf-8')
+    eda_data_2_sub = pd.read_csv(arguments.eda_data_2_sub_path, encoding='utf-8')
+    eda_data_3_sub = pd.read_csv(arguments.eda_data_3_sub_path, encoding='utf-8')
+    eda_data_4_sub = pd.read_csv(arguments.eda_data_4_sub_path, encoding='utf-8')
+
+    eda_submission = eda_data_0_sub[['label_0', 'label_1', 'label_2']] + eda_data_1_sub[
+        ['label_0', 'label_1', 'label_2']] + eda_data_2_sub[['label_0', 'label_1', 'label_2']] + eda_data_3_sub[
+                         ['label_0', 'label_1', 'label_2']] + eda_data_4_sub[['label_0', 'label_1', 'label_2']]
+
+    y = []
+    for index in range(eda_submission.shape[0]):
+        sample = eda_submission.iloc[index].to_dict()
+        y.append(int(max(sample, key=sample.get)[-1]) - 1)
+
+    eda_submission['y'] = y
+    eda_submission['id'] = submit_example['id']
+    eda_submission[['id', 'y']].to_csv(path_or_buf=arguments.eda_submission_path, encoding='utf-8', index=None)
+
+
 if __name__ == "__main__":
     main()
+    generate_submission()

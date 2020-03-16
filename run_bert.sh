@@ -13,19 +13,19 @@ python run_bert.py \
 --do_test \
 --data_dir eda/data_$i \
 --output_dir models/$DATE/model_bert$i \
---max_seq_length 128 \
+--max_seq_length 96 \
 --split_num 3 \
 --lstm_hidden_size 512 \
 --lstm_layers 2 \
 --lstm_dropout 0.1 \
---eval_steps 50 \
---per_gpu_train_batch_size 16 \
+--eval_steps 600 \
+--per_gpu_train_batch_size 32 \
 --gradient_accumulation_steps 1 \
---per_gpu_eval_batch_size 16 \
+--per_gpu_eval_batch_size 32 \
 --learning_rate 5e-6 \
 --adam_epsilon 1e-6 \
 --weight_decay 0.01 \
---train_steps 500
+--train_steps 2500
 
 done  
 
