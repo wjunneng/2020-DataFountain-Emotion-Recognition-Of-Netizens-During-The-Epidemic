@@ -34,12 +34,12 @@ from tqdm import tqdm
 from itertools import cycle
 from sklearn.metrics import f1_score
 from torch.utils.data.distributed import DistributedSampler
-from pytorch_transformers import AdamW, WarmupLinearSchedule
-from pytorch_transformers.tokenization_bert import BertTokenizer
-from pytorch_transformers.modeling_bert import BertForSequenceClassification, BertConfig
+from src.transformers import AdamW, WarmupLinearSchedule
+from src.transformers.tokenization_bert import BertTokenizer
+from src.transformers.modeling_bert import BertForSequenceClassification, BertConfig
 from torch.utils.data import (DataLoader, RandomSampler, SequentialSampler, TensorDataset)
 
-from confs import arguments
+from src.confs import arguments
 
 CUDA_LAUNCH_BLOCKING = 1
 MODEL_CLASSES = {'bert': (BertConfig, BertForSequenceClassification, BertTokenizer), }
