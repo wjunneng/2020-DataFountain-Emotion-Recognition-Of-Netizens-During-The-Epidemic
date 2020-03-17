@@ -39,7 +39,7 @@ from pytorch_transformers.tokenization_bert import BertTokenizer
 from pytorch_transformers.modeling_bert import BertForSequenceClassification, BertConfig
 from torch.utils.data import (DataLoader, RandomSampler, SequentialSampler, TensorDataset)
 
-from eda import args as arguments
+from confs import arguments
 
 CUDA_LAUNCH_BLOCKING = 1
 MODEL_CLASSES = {'bert': (BertConfig, BertForSequenceClassification, BertTokenizer), }
@@ -314,7 +314,7 @@ def main():
     # args.do_train = False
     # args.do_eval = False
     # args.do_test = True
-    # args.data_dir = os.path.join(arguments.eda_dir, 'data_0')
+    # args.data_dir = os.path.join(arguments.fold_dir, 'data_0')
     # args.output_dir = '/home/wjunneng/Ubuntu/2020-DataFountain-Emotion-Recognition-Of-Netizens-During-The-Epidemic/models/20200313/model_bert0'
     # args.max_seq_length = 64
     # args.split_num = 3
@@ -613,24 +613,24 @@ def main():
 
 def generate_submission():
     submit_example = pd.read_csv(arguments.submit_example_path, encoding='utf-8')
-    eda_data_0_sub = pd.read_csv(arguments.eda_data_0_sub_path, encoding='utf-8')
-    eda_data_1_sub = pd.read_csv(arguments.eda_data_1_sub_path, encoding='utf-8')
-    eda_data_2_sub = pd.read_csv(arguments.eda_data_2_sub_path, encoding='utf-8')
-    eda_data_3_sub = pd.read_csv(arguments.eda_data_3_sub_path, encoding='utf-8')
-    eda_data_4_sub = pd.read_csv(arguments.eda_data_4_sub_path, encoding='utf-8')
+    fold_data_0_sub = pd.read_csv(arguments.fold_data_0_sub_path, encoding='utf-8')
+    fold_data_1_sub = pd.read_csv(arguments.fold_data_1_sub_path, encoding='utf-8')
+    fold_data_2_sub = pd.read_csv(arguments.fold_data_2_sub_path, encoding='utf-8')
+    fold_data_3_sub = pd.read_csv(arguments.fold_data_3_sub_path, encoding='utf-8')
+    fold_data_4_sub = pd.read_csv(arguments.fold_data_4_sub_path, encoding='utf-8')
 
-    eda_submission = eda_data_0_sub[['label_0', 'label_1', 'label_2']] + eda_data_1_sub[
-        ['label_0', 'label_1', 'label_2']] + eda_data_2_sub[['label_0', 'label_1', 'label_2']] + eda_data_3_sub[
-                         ['label_0', 'label_1', 'label_2']] + eda_data_4_sub[['label_0', 'label_1', 'label_2']]
+    fold_submission = fold_data_0_sub[['label_0', 'label_1', 'label_2']] + fold_data_1_sub[
+        ['label_0', 'label_1', 'label_2']] + fold_data_2_sub[['label_0', 'label_1', 'label_2']] + fold_data_3_sub[
+                          ['label_0', 'label_1', 'label_2']] + fold_data_4_sub[['label_0', 'label_1', 'label_2']]
 
     y = []
-    for index in range(eda_submission.shape[0]):
-        sample = eda_submission.iloc[index].to_dict()
+    for index in range(fold_submission.shape[0]):
+        sample = fold_submission.iloc[index].to_dict()
         y.append(int(max(sample, key=sample.get)[-1]) - 1)
 
-    eda_submission['y'] = y
-    eda_submission['id'] = submit_example['id']
-    eda_submission[['id', 'y']].to_csv(path_or_buf=arguments.eda_submission_path, encoding='utf-8', index=None)
+    fold_submission['y'] = y
+    fold_submission['id'] = submit_example['id']
+    fold_submission[['id', 'y']].to_csv(path_or_buf=arguments.fold_submission_path, encoding='utf-8', index=None)
 
 
 if __name__ == "__main__":

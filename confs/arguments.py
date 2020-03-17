@@ -13,7 +13,6 @@ data_dir = os.path.join(project_dir, 'data')
 input_dir = os.path.join(data_dir, 'input')
 test_dataset_dir = os.path.join(input_dir, 'test_dataset')
 train_dataset_dir = os.path.join(input_dir, 'train_dataset')
-pretain_model_dir = os.path.join(data_dir, 'pretain_model')
 
 # -* test *-
 test_10k_path = os.path.join(test_dataset_dir, 'nCov_10k_test_utf_8.csv')
@@ -26,19 +25,19 @@ target_categories = '微博发布时间'
 output_categories = '情感倾向'
 
 # -* output *-
-eda_dir = os.path.join(project_dir, 'eda')
-eda_report_path = os.path.join(eda_dir, 'report.txt')
-eda_data_dir = os.path.join(eda_dir, 'data')
-eda_data_train_10k_path = os.path.join(eda_data_dir, 'nCoV_100k_train_utf_8.labled.csv')
-eda_data_test_10k_path = os.path.join(eda_data_dir, 'nCov_10k_test_utf_8.csv')
+fold_dir = os.path.join(data_dir, 'fold')
+fold_report_path = os.path.join(fold_dir, 'report.txt')
+fold_data_dir = os.path.join(fold_dir, 'data')
+fold_data_train_10k_path = os.path.join(fold_data_dir, 'nCoV_100k_train_utf_8.labled.csv')
+fold_data_test_10k_path = os.path.join(fold_data_dir, 'nCov_10k_test_utf_8.csv')
 
 submit_example_path = os.path.join(input_dir, 'submit_example.csv')
-eda_submission_path = os.path.join(eda_data_dir, 'submission.csv')
-eda_data_0_sub_path = os.path.join(eda_dir, 'data_0/sub.csv')
-eda_data_1_sub_path = os.path.join(eda_dir, 'data_1/sub.csv')
-eda_data_2_sub_path = os.path.join(eda_dir, 'data_2/sub.csv')
-eda_data_3_sub_path = os.path.join(eda_dir, 'data_3/sub.csv')
-eda_data_4_sub_path = os.path.join(eda_dir, 'data_4/sub.csv')
+fold_submission_path = os.path.join(fold_data_dir, 'submission.csv')
+fold_data_0_sub_path = os.path.join(fold_dir, 'data_0/sub.csv')
+fold_data_1_sub_path = os.path.join(fold_dir, 'data_1/sub.csv')
+fold_data_2_sub_path = os.path.join(fold_dir, 'data_2/sub.csv')
+fold_data_3_sub_path = os.path.join(fold_dir, 'data_3/sub.csv')
+fold_data_4_sub_path = os.path.join(fold_dir, 'data_4/sub.csv')
 
 id = '微博id'
 content = '微博中文内容'

@@ -1,5 +1,5 @@
 DATE=$(date +%Y%m%d)
-mkdir models/$DATE
+mkdir data/models/$DATE
 export CUDA_VISIBLE_DEVICES=0
 for((i=0;i<5;i++));
 do
@@ -7,12 +7,12 @@ do
 python run_bert.py \
 --config_name bert_config.json \
 --model_type bert \
---model_name_or_path premodels/chinese_roberta_wwm_ext_pytorch \
+--model_name_or_path data/prev_trained_models/chinese_roberta_wwm_ext_pytorch \
 --do_train \
 --do_eval \
 --do_test \
 --data_dir eda/data_$i \
---output_dir models/$DATE/model_bert$i \
+--output_dir data/models/$DATE/model_bert$i \
 --max_seq_length 128 \
 --split_num 3 \
 --lstm_hidden_size 512 \
