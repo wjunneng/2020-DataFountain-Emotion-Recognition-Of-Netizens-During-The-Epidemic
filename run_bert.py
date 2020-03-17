@@ -40,6 +40,7 @@ from src.transformers.modeling_bert import BertForSequenceClassification, BertCo
 from torch.utils.data import (DataLoader, RandomSampler, SequentialSampler, TensorDataset)
 
 from src.confs import arguments
+from src.libs import file_utils, model_utils
 
 CUDA_LAUNCH_BLOCKING = 1
 MODEL_CLASSES = {'bert': (BertConfig, BertForSequenceClassification, BertTokenizer), }
@@ -67,6 +68,10 @@ class InputExample(object):
             label: (Optional) string. The label of the example. This should be
             specified for train and dev examples, but not for test examples.
         """
+        text_a = model_utils.Util.deal_text(str(text_a))
+        text_a = model_utils.Util.hant_to_hans(text_a)
+        text_b = str(text_b)
+
         self.guid = guid
         self.text_a = text_a
         self.text_b = text_b
@@ -188,7 +193,7 @@ class BERT(object):
         if '·' in df[arguments.flag].values:
             logger.info('input_file: {}'.format(input_file))
             logger.info('>' * 100)
-        for val in df[[arguments.id, arguments.content, arguments.title, arguments.flag]].values:
+        for val in df[[arguments.weibo_id, arguments.content, arguments.title, arguments.flag]].values:
             examples.append(InputExample(guid=val[0], text_a=val[1], text_b=val[2], label=val[3]))
         return examples
 
@@ -604,35 +609,13 @@ def main():
 
             if flag == 'test':
                 df = pd.read_csv(os.path.join(args.data_dir, file), encoding='utf-8')
-                df['label_0'] = logits[:, 0]
-                df['label_1'] = logits[:, 1]
-                df['label_2'] = logits[:, 2]
-                df[['微博id', 'label_0', 'label_1', 'label_2']].to_csv(os.path.join(args.output_dir, "sub.csv"),
-                                                                     index=False)
-
-
-def generate_submission():
-    submit_example = pd.read_csv(arguments.submit_example_path, encoding='utf-8')
-    fold_data_0_sub = pd.read_csv(arguments.fold_data_0_sub_path, encoding='utf-8')
-    fold_data_1_sub = pd.read_csv(arguments.fold_data_1_sub_path, encoding='utf-8')
-    fold_data_2_sub = pd.read_csv(arguments.fold_data_2_sub_path, encoding='utf-8')
-    fold_data_3_sub = pd.read_csv(arguments.fold_data_3_sub_path, encoding='utf-8')
-    fold_data_4_sub = pd.read_csv(arguments.fold_data_4_sub_path, encoding='utf-8')
-
-    fold_submission = fold_data_0_sub[['label_0', 'label_1', 'label_2']] + fold_data_1_sub[
-        ['label_0', 'label_1', 'label_2']] + fold_data_2_sub[['label_0', 'label_1', 'label_2']] + fold_data_3_sub[
-                          ['label_0', 'label_1', 'label_2']] + fold_data_4_sub[['label_0', 'label_1', 'label_2']]
-
-    y = []
-    for index in range(fold_submission.shape[0]):
-        sample = fold_submission.iloc[index].to_dict()
-        y.append(int(max(sample, key=sample.get)[-1]) - 1)
-
-    fold_submission['y'] = y
-    fold_submission['id'] = submit_example['id']
-    fold_submission[['id', 'y']].to_csv(path_or_buf=arguments.fold_submission_path, encoding='utf-8', index=None)
+                df[arguments.label_0] = logits[:, 0]
+                df[arguments.label_1] = logits[:, 1]
+                df[arguments.label_2] = logits[:, 2]
+                df[[arguments.weibo_id, arguments.label_0, arguments.label_1, arguments.label_2]].to_csv(
+                    os.path.join(args.output_dir, "sub.csv"), index=False)
 
 
 if __name__ == "__main__":
     main()
-    generate_submission()
+    file_utils.generate_submission()
