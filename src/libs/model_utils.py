@@ -315,19 +315,35 @@ class LabelSmoothingLoss(nn.Module):
         https://github.com/pytorch/pytorch/issues/7455
     """
 
-    def __init__(self, categories=arguments.categories, ignore_index=-100, smoothing=0.1, dim=-1):
+    # def __init__(self, categories=arguments.categories, ignore_index=-100, smoothing=0.1, dim=-1):
+    #     super(LabelSmoothingLoss, self).__init__()
+    #     self.confidence = 1.0 - smoothing
+    #     self.smoothing = smoothing
+    #     self.categories = categories
+    #     self.dim = dim
+    #     self.ignore_index = ignore_index
+    #
+    # def forward(self, logit, target):
+    #     with torch.no_grad():
+    #         label_smoothed = torch.zeros_like(logit)
+    #         label_smoothed.fill_(self.smoothing / (self.categories - 1))
+    #         label_smoothed.scatter_(1, target.data.unsqueeze(1), self.confidence)
+    #         label_smoothed[target == self.ignore_index, :] = 0
+    #
+    #     return torch.mean(torch.sum(-label_smoothed * logit))
+
+    def __init__(self, classes=arguments.categories, smoothing=0.1, dim=-1):
         super(LabelSmoothingLoss, self).__init__()
         self.confidence = 1.0 - smoothing
         self.smoothing = smoothing
-        self.categories = categories
+        self.cls = classes
         self.dim = dim
-        self.ignore_index = ignore_index
 
-    def forward(self, logit, target):
+    def forward(self, pred, target):
+        pred = pred.log_softmax(dim=self.dim)
         with torch.no_grad():
-            label_smoothed = torch.zeros_like(logit)
-            label_smoothed.fill_(self.smoothing / (self.categories - 1))
-            label_smoothed.scatter_(1, target.data.unsqueeze(1), self.confidence)
-            label_smoothed[target == self.ignore_index, :] = 0
+            true_dist = torch.zeros_like(pred)
+            true_dist.fill_(self.smoothing / (self.cls - 1))
+            true_dist.scatter_(1, target.data.unsqueeze(1), self.confidence)
 
-        return torch.sum(-label_smoothed * logit)
+        return torch.mean(torch.sum(-true_dist * pred, dim=self.dim))
