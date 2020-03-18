@@ -273,4 +273,22 @@ def generate_submission():
                                                             encoding='utf-8',
                                                             index=None)
     else:
-        pass
+        submit_example = pd.read_csv(arguments.submit_example_path, encoding='utf-8')
+        fold_data_0_sub = pd.read_csv(arguments.fold_data_0_sub_path, encoding='utf-8')
+        fold_data_1_sub = pd.read_csv(arguments.fold_data_1_sub_path, encoding='utf-8')
+        fold_data_2_sub = pd.read_csv(arguments.fold_data_2_sub_path, encoding='utf-8')
+
+        fold_submission = fold_data_0_sub[[arguments.label_0, arguments.label_1, arguments.label_2]] + fold_data_1_sub[
+            [arguments.label_0, arguments.label_1, arguments.label_2]] + fold_data_2_sub[
+                              [arguments.label_0, arguments.label_1, arguments.label_2]]
+
+        y = []
+        for index in range(fold_submission.shape[0]):
+            sample = fold_submission.iloc[index].to_dict()
+            y.append(int(max(sample, key=sample.get)[-1]) - 1)
+
+        fold_submission[arguments.y] = y
+        fold_submission[arguments.id] = submit_example[arguments.id]
+        fold_submission[[arguments.id, arguments.y]].to_csv(path_or_buf=arguments.fold_submission_path,
+                                                            encoding='utf-8',
+                                                            index=None)

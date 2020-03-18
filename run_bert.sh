@@ -19,9 +19,9 @@ python run_bert.py \
 --lstm_layers 2 \
 --lstm_dropout 0.1 \
 --eval_steps 500 \
---per_gpu_train_batch_size 32 \
+--per_gpu_train_batch_size 36 \
 --gradient_accumulation_steps 1 \
---per_gpu_eval_batch_size 32 \
+--per_gpu_eval_batch_size 36 \
 --learning_rate 5e-6 \
 --adam_epsilon 1e-6 \
 --weight_decay 0.01 \

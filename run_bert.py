@@ -39,14 +39,15 @@ from src.transformers.tokenization_bert import BertTokenizer
 from src.transformers.modeling_bert import BertForSequenceClassification, BertConfig
 from torch.utils.data import (DataLoader, RandomSampler, SequentialSampler, TensorDataset)
 
+from src.libs.optimizers import OptimizersF1
 from src.confs import arguments
 from src.libs import file_utils, model_utils
 
 CUDA_LAUNCH_BLOCKING = 1
 MODEL_CLASSES = {'bert': (BertConfig, BertForSequenceClassification, BertTokenizer), }
 ALL_MODELS = sum((tuple(conf.pretrained_config_archive_map.keys()) for conf in (BertConfig,)), ())
-logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
-                    level=logging.INFO)
+# logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s', datefmt='%m/%d/%Y %H:%M:%S',
+#                     level=logging.INFO)
 logger = logging.getLogger(__name__)
 warnings.filterwarnings('ignore')
 
@@ -315,9 +316,9 @@ def main():
     # ##################################### 线下测试 #####################################
     # args.config_name = 'bert_config.json'
     # args.model_type = 'bert'
-    # args.model_name_or_path = 'premodels/chinese_roberta_wwm_ext_pytorch'
-    # args.do_train = False
-    # args.do_eval = False
+    # args.model_name_or_path = '/home/wjunneng/Ubuntu/2020-DataFountain-Emotion-Recognition-Of-Netizens-During-The-Epidemic/data/prev_trained_models/chinese_roberta_wwm_ext_pytorch'
+    # args.do_train = True
+    # args.do_eval = True
     # args.do_test = True
     # args.data_dir = os.path.join(arguments.fold_dir, 'data_0')
     # args.output_dir = '/home/wjunneng/Ubuntu/2020-DataFountain-Emotion-Recognition-Of-Netizens-During-The-Epidemic/models/20200313/model_bert0'
@@ -326,14 +327,14 @@ def main():
     # args.lstm_hidden_size = 512
     # args.lstm_layers = 2
     # args.lstm_dropout = 0.1
-    # args.eval_steps = 20
-    # args.per_gpu_train_batch_size = 8
+    # args.eval_steps = 5
+    # args.per_gpu_train_batch_size = 4
     # args.gradient_accumulation_steps = 1
-    # args.per_gpu_eval_batch_size = 16
+    # args.per_gpu_eval_batch_size = 4
     # args.learning_rate = 5e-6
     # args.adam_epsilon = 1e-6
     # args.weight_decay = 0.01
-    # args.train_steps = 200
+    # args.train_steps = 20
     # ##################################### 线下测试 #####################################
 
     # Setup logging

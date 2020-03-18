@@ -6,8 +6,8 @@ os.chdir(sys.path[0])
 
 # -* orignal dir/path *-
 # project_dir = os.path.dirname(os.path.abspath('..'))
-project_dir = '/home/wjunneng/Ubuntu/2020-DataFountain-Emotion-Recognition-Of-Netizens-During-The-Epidemic'
-# project_dir = '/content/2020-DataFountain-Emotion-Recognition-Of-Netizens-During-The-Epidemic'
+# project_dir = '/home/wjunneng/Ubuntu/2020-DataFountain-Emotion-Recognition-Of-Netizens-During-The-Epidemic'
+project_dir = '/content/2020-DataFountain-Emotion-Recognition-Of-Netizens-During-The-Epidemic'
 
 data_dir = os.path.join(project_dir, 'data')
 input_dir = os.path.join(data_dir, 'input')
@@ -48,10 +48,10 @@ label_0 = 'label_0'
 label_1 = 'label_1'
 label_2 = 'label_2'
 
-# test_10k_name = 'nCov_10k_test_utf_8.csv'
-# dev_20k_name = 'nCoV_20k_dev_utf_8.labled.csv'
-# train_80k_name = 'nCoV_80k_train_utf_8.labled.csv'
+test_10k_name = 'nCov_10k_test_utf_8.csv'
+dev_20k_name = 'nCoV_20k_dev_utf_8.labled.csv'
+train_80k_name = 'nCoV_80k_train_utf_8.labled.csv'
 
-test_10k_name = 'test.csv'
-dev_20k_name = 'dev.csv'
-train_80k_name = 'train.csv'
+# test_10k_name = 'test.csv'
+# dev_20k_name = 'dev.csv'
+# train_80k_name = 'train.csv'

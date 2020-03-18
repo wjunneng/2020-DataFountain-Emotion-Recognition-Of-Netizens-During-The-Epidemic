@@ -1030,9 +1030,26 @@ class BertForSequenceClassification(BertPreTrainedModel):
                 loss_fct = MSELoss()
                 loss = loss_fct(logits.view(-1), labels.view(-1))
             else:
+                # --------Original--------
                 # loss_fct = CrossEntropyLoss()
-                loss_fct = LabelSmoothingLoss()
-                loss = loss_fct(logits.view(-1, self.num_labels), labels.view(-1))
+                # loss = loss_fct(logits.view(-1, self.num_labels), labels.view(-1))
+                # --------Original--------
+
+                # --------Trick--------
+                # loss_fct = LabelSmoothingLoss()
+                # loss = loss_fct(logits.view(-1, self.num_labels), labels.view(-1))
+                # --------Trick--------
+
+                # --------Trick--------
+                from src.libs.optimizers import OptimizersF1
+                op = OptimizersF1()
+                op.fit(logits.detach().cpu().numpy(), labels.detach().cpu().numpy())
+                logits = torch.tensor(op.coefficients() * logits.detach().cpu().numpy()).to('cuda:0')
+                logits.requires_grad = True
+                loss = torch.tensor(op.predict(logits.detach().cpu().numpy(), labels.detach().cpu().numpy()))
+                loss.requires_grad = True
+                # --------Trick--------
+
             outputs = loss
         else:
             outputs = nn.functional.softmax(logits, -1)
