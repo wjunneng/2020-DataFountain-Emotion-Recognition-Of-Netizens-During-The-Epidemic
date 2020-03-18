@@ -275,12 +275,8 @@ def generate_submission():
     else:
         submit_example = pd.read_csv(arguments.submit_example_path, encoding='utf-8')
         fold_data_0_sub = pd.read_csv(arguments.fold_data_0_sub_path, encoding='utf-8')
-        fold_data_1_sub = pd.read_csv(arguments.fold_data_1_sub_path, encoding='utf-8')
-        fold_data_2_sub = pd.read_csv(arguments.fold_data_2_sub_path, encoding='utf-8')
 
-        fold_submission = fold_data_0_sub[[arguments.label_0, arguments.label_1, arguments.label_2]] + fold_data_1_sub[
-            [arguments.label_0, arguments.label_1, arguments.label_2]] + fold_data_2_sub[
-                              [arguments.label_0, arguments.label_1, arguments.label_2]]
+        fold_submission = fold_data_0_sub[[arguments.label_0, arguments.label_1, arguments.label_2]]
 
         y = []
         for index in range(fold_submission.shape[0]):

@@ -618,5 +618,5 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    # main()
     file_utils.generate_submission()

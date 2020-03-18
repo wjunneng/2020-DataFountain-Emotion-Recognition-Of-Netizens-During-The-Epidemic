@@ -6,8 +6,8 @@ os.chdir(sys.path[0])
 
 # -* orignal dir/path *-
 # project_dir = os.path.dirname(os.path.abspath('..'))
-# project_dir = '/home/wjunneng/Ubuntu/2020-DataFountain-Emotion-Recognition-Of-Netizens-During-The-Epidemic'
-project_dir = '/content/2020-DataFountain-Emotion-Recognition-Of-Netizens-During-The-Epidemic'
+project_dir = '/home/wjunneng/Ubuntu/2020-DataFountain-Emotion-Recognition-Of-Netizens-During-The-Epidemic'
+# project_dir = '/content/2020-DataFountain-Emotion-Recognition-Of-Netizens-During-The-Epidemic'
 
 data_dir = os.path.join(project_dir, 'data')
 input_dir = os.path.join(data_dir, 'input')
